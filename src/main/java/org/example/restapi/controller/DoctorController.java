@@ -11,56 +11,53 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/doctors")
 public class DoctorController {
-
     @Autowired
     private DoctorService doctorService;
 
-    //Добавление пользователя
     @PostMapping
-    public ResponseEntity registration(@RequestBody DoctorEntity doctor) {
+    public ResponseEntity<?> registration(@RequestBody DoctorEntity doctor) {
         try {
             doctorService.registration(doctor);
-            return ResponseEntity.ok("Пользователь успешно сохранен! ");
+            return ResponseEntity.accepted().body(doctor);
         } catch (DoctorAlreadyExist e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.internalServerError().body("Server error");
         }
     }
 
-    //ГЕТ запрос
     @GetMapping("/{id}")
-    public ResponseEntity getOneDoctors(@PathVariable Long id) {
+    public ResponseEntity<?> getOneDoctors(@PathVariable Long id) {
         try {
-            // Здесь можно добавить логику для получения списка врачей из репозитория
             return ResponseEntity.ok(doctorService.getOneDoctor(id));
         } catch (DoctorNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Ошибка сервера ! ");
+            return ResponseEntity.internalServerError().body("Server error");
         }
     }
 
-    //Обновление
     @PutMapping("/{id}")
-    public ResponseEntity updateDoctor(@PathVariable Long id, @RequestBody DoctorEntity updatedDoctor) {
+    public ResponseEntity<?> updateDoctor(@PathVariable Long id, @RequestBody DoctorEntity updatedDoctor) {
         try {
             DoctorEntity doctor = doctorService.update(id, updatedDoctor);
-            return ResponseEntity.ok(doctor);
+            return ResponseEntity.accepted().body(doctor);
         } catch (DoctorNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Ошибка сервера !");
+            return ResponseEntity.internalServerError().body("Server error");
         }
     }
 
-    //Удаление
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteDoctor(@PathVariable Long id) throws DoctorNotFoundException {
+    public ResponseEntity<?> deleteDoctor(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(doctorService.delete(id));
+            doctorService.delete(id);
+            return ResponseEntity.accepted().build();
+        } catch (DoctorNotFoundException e) {
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Ошибка сервера ! ");
+            return ResponseEntity.internalServerError().body("Server error");
         }
     }
 }

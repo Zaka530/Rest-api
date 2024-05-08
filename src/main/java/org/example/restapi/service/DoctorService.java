@@ -8,9 +8,7 @@ import org.example.restapi.repository.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class DoctorService {
@@ -29,16 +27,21 @@ public class DoctorService {
         return doctorRepository.save(doctorEntity);
     }
     public Doctor getOneDoctor(Long id) throws DoctorNotFoundException {
-        DoctorEntity doctor=doctorRepository.findById(id).get();
-        if(doctor==null){
+        Optional<DoctorEntity> optionalDoctor = doctorRepository.findById(id);
+        if(optionalDoctor.isEmpty()){
             throw new DoctorNotFoundException("Пользователь не был найден !");
         }
 
-        return Doctor.toModel(doctor);
+        return Doctor.toModel(optionalDoctor.get());
     }
-    public Long delete(Long id) throws DoctorNotFoundException {
-        doctorRepository.deleteById(id);
-        return id;
+
+    public void delete(Long id) throws DoctorNotFoundException {
+        Optional<DoctorEntity> optionalDoctor = doctorRepository.findById(id);
+        if (optionalDoctor.isPresent()) {
+            doctorRepository.deleteById(id);
+        } else {
+            throw new DoctorNotFoundException("Доктор с id " + id + " не найден!");
+        }
     }
     public DoctorEntity update(Long id, DoctorEntity updatedDoctor) throws DoctorNotFoundException {
         // Находим существующего доктора по ID или выбрасываем исключение, если не найден

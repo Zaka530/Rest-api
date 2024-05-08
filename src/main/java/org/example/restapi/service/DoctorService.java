@@ -28,7 +28,7 @@ public class DoctorService {
     }
     public Doctor getOneDoctor(Long id) throws DoctorNotFoundException {
         Optional<DoctorEntity> optionalDoctor = doctorRepository.findById(id);
-        if(optionalDoctor.isEmpty()){
+        if (optionalDoctor.isEmpty()) {
             throw new DoctorNotFoundException("Пользователь не был найден !");
         }
 

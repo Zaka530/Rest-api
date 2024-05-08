@@ -6,8 +6,11 @@ import org.example.restapi.exception.DoctorNotFoundException;
 import org.example.restapi.model.Doctor;
 import org.example.restapi.repository.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DoctorService {
@@ -50,6 +53,9 @@ public class DoctorService {
         // Сохраняем обновленного доктора в базе данных и возвращаем его
         return doctorRepository.save(existingDoctor);
     }
+
+
+
 
 }
 
